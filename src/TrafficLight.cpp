@@ -45,14 +45,16 @@ TrafficLightPhase TrafficLight::getCurrentPhase()
 
 void TrafficLight::simulate()
 {
-    // FP.2b : Finally, the private method „cycleThroughPhases“ should be started in a thread 
-    // when the public method „simulate“ is called. To do this, use the thread queue in the base class. 
+    // FP.2b-DONE : Finally, the private method „cycleThroughPhases“ should be started in a thread 
+    // when the public method „simulate“ is called. To do this, use the this_thread queue in the base class.
+    threads.emplace_back(std::thread(&TrafficLight::cycleThroughPhases, this));
+
 }
 
 // virtual function which is executed in a thread
 void TrafficLight::cycleThroughPhases()
 {
-    // FP.2a : Implement the function with an infinite loop that measures the time between two loop cycles 
+    // FP.2a-DONE : Implement the function with an infinite loop that measures the time between two loop cycles 
     // and toggles the current phase of the traffic light between red and green and sends an update method 
     // to the message queue using move semantics. The cycle duration should be a random value between 4 and 6 seconds. 
     // Also, the while-loop should use std::this_thread::sleep_for to wait 1ms between two cycles.
@@ -72,8 +74,9 @@ void TrafficLight::cycleThroughPhases()
     while (true) {
 
         /* Time betwen cycles (milliseconds) */
-        time_since_last_update = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()
-                                    - last_update).count();
+        time_since_last_update =
+            std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() -
+                last_update).count();
 
         if (time_since_last_update >= cycle_duration) {
             // Toggle TrafficLight
@@ -81,7 +84,7 @@ void TrafficLight::cycleThroughPhases()
                                 TrafficLightPhase::green : TrafficLightPhase::red;
 
             //Send an update method to the message queue using move semantics
-            _nessageQueue.send(std::move(_currentPhase));
+            _messageQueue.send(std::move(_currentPhase));
 
             /* Reset stop watch for next cycle */
             last_update = std::chrono::system_clock::now();
