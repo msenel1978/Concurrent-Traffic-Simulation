@@ -80,6 +80,9 @@ void TrafficLight::cycleThroughPhases()
             _currentPhase = (_currentPhase == TrafficLightPhase::red) ?
                                 TrafficLightPhase::green : TrafficLightPhase::red;
 
+            //Send an update method to the message queue using move semantics
+            _nessageQueue.send(std::move(_currentPhase));
+
             /* Reset stop watch for next cycle */
             last_update = std::chrono::system_clock::now();
 
