@@ -47,14 +47,25 @@ TrafficLight::TrafficLight()
 {
     _currentPhase = TrafficLightPhase::red;
 }
-/*
+
 void TrafficLight::waitForGreen()
 {
     // FP.5b : add the implementation of the method waitForGreen, in which an infinite while-loop 
     // runs and repeatedly calls the receive function on the message queue. 
     // Once it receives TrafficLightPhase::green, the method returns.
+    TrafficLightPhase light_phase;
+
+    while (true) {
+
+        light_phase = _messageQueue.receive();
+
+        if (light_phase == TrafficLightPhase::green)
+            return;
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_TIME_MS));
+    }
 }
-*/
+
 
 TrafficLightPhase TrafficLight::getCurrentPhase()
 {
