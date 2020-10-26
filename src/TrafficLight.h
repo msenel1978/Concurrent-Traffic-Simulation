@@ -21,8 +21,12 @@ template <class T>
 class MessageQueue
 {
 public:
+	/* Original decleration
 	void send(TrafficLightPhase &&);
 	TrafficLightPhase receive();
+	*/
+	void send(T &&);
+	T receive();
 
 private:
 	std::condition_variable _queueCond;
